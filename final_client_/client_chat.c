@@ -149,8 +149,8 @@ void connect_server(struct sockaddr_in * server_conn,msg_ack_t * server_assigned
 {
 	
 	/*The Client is trying to register in our *running* server, if it fails close client!*/
-	printf("Hello dear Client pls write the server IP Address:(by the following format xxx.xxx.xxx.xxx)\n");
-	printf("Press 'Enter' For Default IP\n");
+	printf("Hello dear User Please Press Enter to get connected to server\n");
+	
 
 	fgets(ip_str,INET_ADDRSTRLEN,stdin); //gets input from usr
 	if(ip_str[0]==10){
@@ -255,8 +255,9 @@ void *listenMode(void *args)
 		printf("Error creating socket!\n");
 		exit(1);
 	}
+	printf("\n");
 	printf("Socket created...\n");
-
+printf("\n");
 	memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
 	addr.sin_addr.s_addr = INADDR_ANY;
@@ -268,8 +269,9 @@ void *listenMode(void *args)
 		printf("Error binding!\n");
 		exit(1);
 	}
+	printf("\n");
 	printf("Binding done...\n");
-
+printf("\n");
 	printf("Waiting for peer connection, Listening on Port:%d\n",addr.sin_port);
 	listen(sockfd, 1);
 
@@ -436,7 +438,7 @@ void selectPeerToConnect(struct sockaddr_in * out_sock,msg_ack_t * server_assign
 		}
 	}
 
-	printf("Please Choose the client you want to chat with:(By Number)\n");
+	printf("Please Choose the client you want to chat with From the given list\n");
 
 	scanf( "%d", &userSelection);
 
