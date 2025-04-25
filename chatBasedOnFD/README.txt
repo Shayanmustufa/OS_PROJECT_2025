@@ -4,8 +4,8 @@ and start a P2P chat with this socket
 notice.
 you will need to open this program both on "sender" and reciver" each of them will have a terminal that communicates with user.
 
-This program accepts via args(argv[1]) an FD of TCP Socket and Make a Synchronic ìconversationî
-between the two hosts that share the SOCKET, in any given time they can enter ìexitî keyword and the
+This program accepts via args(argv[1]) an FD of TCP Socket and Make a Synchronic ‚Äúconversation‚Äù
+between the two hosts that share the SOCKET, in any given time they can enter ‚Äúexit‚Äù keyword and the
 conversation will be over and the socket will be closed.
 
-enjoy.
+Thanks
