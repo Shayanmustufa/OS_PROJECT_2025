@@ -1,13 +1,3 @@
-/*
- * chatc.c
- *
- *  Created on: Jun 6, 2017
- *      Author: Eran Peled
- *
- *      This File is the implement of P2P Client that can also act as a server and a client
- *      Meaning we will have Full-Duplex ability during chat session between two users
- */
-
 #include "chat.h"
 #include <stdio.h> //printf
 #include <stdlib.h> //exit, perror
@@ -29,27 +19,26 @@ static void handler(int signum)
 {
 	pthread_exit(NULL);
 }
-/*eraseList function*/
 void erase_all_users();
-/* Add user to userList */
+
 void user_add(msg_peer_t *msg);
-/* Delete user from userList */
+
 void user_delete(msg_down_t* msg);
-/*get localIP Address using socket_fd*/
+
 in_addr_t sockfd_to_in_addr_t(int sockfd);
-/*function that connects client to the server sends MSG_UP and gets MSG_ACK*/
+
 void connect_server(struct sockaddr_in * server_conn,msg_ack_t * server_assigned_port,int *server_fd,in_addr_t *localIP,char usr_input[C_BUFF_SIZE]);
-/*function that opens a the client for incoming connection(runs in a new thread)*/
+
 void *listenMode(void *args);
-/*generate menu for our p2p client*/
+
 int openChat(int fd); //opens new windows with xterm to chat.
-/*When user sends MSG_WHO this method will get all users from our server*/
+
 void getListFromServer(struct sockaddr_in * server_conn);
-/*Remove peer from server*/
+
 void removePeerFromServer(struct sockaddr_in * server_conn,msg_ack_t * server_assigned_port);
-/*Handle Peer connection*/
+
 void *handlePeerConnection(void *tArgs);
-/*the peer choose which peer he wants to connect with*/
+
 void selectPeerToConnect(struct sockaddr_in * out_sock,msg_ack_t * server_assigned_port,in_addr_t *localIP,char usr_input[C_BUFF_SIZE]);
 
 
@@ -61,36 +50,24 @@ void generate_menu(){
 
 int main(int argc, char *argv[])
 {
-	/*program Vars*/
 	int server_fd= 0;
 	msg_ack_t server_assigned_port;
 	struct sockaddr_in server_conn,incoming_sck;
 	struct sockaddr_in out_sck;
 	in_addr_t localIP; //our peer IP Address
 	char usr_input[C_BUFF_SIZE]; //for user input during the program
-	/***************************************/
+	
 	signal(SIGUSR1, handler);
 	memset(&server_conn, 0, sizeof(struct sockaddr_in));
 	memset(&incoming_sck, 0, sizeof(struct sockaddr_in));
 	memset(&out_sck, 0, sizeof(struct sockaddr_in));
-	/*First*/
-	/*the client connects to the server sends MSG_UP and gets MSG_ACK*/
+	
 	connect_server(&server_conn,&server_assigned_port,&server_fd,&localIP,(char *)&usr_input);
 	printf("Congartulation your assign port number by the server is:%d\n",server_assigned_port.m_port);
-	/*now the "Client" needs to start listen to incoming connections in a new thread*/
-	/***************************** The Algorithm ********************************************************
-	 **The algorithm is : we are listing for incoming connections at all time                          **
-	 **if someone sends us MSG_CONN and we are at prompt, meaning not trying to connect to anyone      **
-	 **we accept the connection and going to chat mode(opening a new terminal)                         **
-	 **if someone is trying to connect with us and we are busy we will send a "busy" tone = MSG_RESP = 0*
-	 **meantime as long we don't have a incoming connection we will present the user with menu and ask **
-	 **him what he want to do                                                                          **
-	 ****************************************************************************************************/
 
-	/*create "another" main for incoming connections in thread*/
+	
 	if(pthread_create(&listen_tid, NULL, listenMode, (void*)&server_assigned_port) != 0)perror("could not create thread");
-	/*while true ->>> present menu and if connection initiate new terminal windows*/
-
+	
 	do{
 		generate_menu();
 		userSelection = (char)getchar();
@@ -153,10 +130,9 @@ in_addr_t sockfd_to_in_addr_t(int sockfd)
 	int s = sockfd;
 	struct sockaddr_in sa;
 	socklen_t sa_len;
-	/* We must put the length in a variable.              */
+	
 	sa_len = sizeof(sa);
-	/* Ask getsockname to fill in this socket's local     */
-	/* address.                                           */
+	                                           
 	if (getsockname(s, (struct sockaddr *)&sa, &sa_len) == -1) {
 		perror("getsockname() failed");
 		return -1;
@@ -165,12 +141,9 @@ in_addr_t sockfd_to_in_addr_t(int sockfd)
 
 }
 
-/*function that connects client to the server sends MSG_UP and gets MSG_ACK*/
 void connect_server(struct sockaddr_in * server_conn,msg_ack_t * server_assigned_port,int *server_fd,in_addr_t *localIP,char usr_input[C_BUFF_SIZE])
 {
-	/*function VARS*/
-	char ip_str[INET_ADDRSTRLEN]; //holds the server IPv4 address in str form
-	/************************************/
+	
 	/*The Client is trying to register in our *running* server, if it fails close client!*/
 	printf("Hello dear Client pls write the server IP Address:(by the following format xxx.xxx.xxx.xxx)\n");
 	printf("Press 'Enter' For Default IP\n");
@@ -246,10 +219,7 @@ pid_t child_pid;
         /* This is the parent process. */
         return child_pid;
     else {
-        /* Now execute CHAT */
-        /*Note! because we are using fork, we have the fd of connected_client*/
-        /* The Program we are running: It will handle chat until MSG_END */
-        
+       
         // Using execlp to execute xterm and ChatBasedOnFD
       if (execlp("xterm", "xterm", "-e", "./ChatBasedOnFD", ascii_fd, NULL) == -1) {
             /* The execlp function returns only if an error occurs. */
@@ -262,7 +232,6 @@ pid_t child_pid;
 }
 
 
-/*function that opens a the client for incoming connection(runs in a new thread)*/
 void *listenMode(void *args)
 {
 	static sigset_t mask;
@@ -270,9 +239,7 @@ void *listenMode(void *args)
 	sigemptyset(&mask);
 	sigaddset(&mask, SIGUSR1);
 
-	/*we have the port num start listen in that port for incoming connections*/
-	/*got it from "main"*/
-	/*Define vars for communication*/
+	
 	msg_ack_t *actualArgs = (msg_ack_t*) args;
 	int socket_fd,client_fd;
 	pthread_t t; //thread for the accepted request
@@ -315,9 +282,7 @@ void *listenMode(void *args)
 			puts("Connection accepted sending MSG_ACK to client");
 		}
 
-		/*prompt the user if he want to accept call*/
-		/*in a new thread*/
-		/*there deal with input*/
+	
 		if(pthread_create(&t, NULL, handlePeerConnection, (void*)&client_fd)!= 0) {
 
 			perror("could not create thread");
@@ -336,7 +301,6 @@ void *listenMode(void *args)
 	return 0;
 }
 
-/*When user sends MSG_WHO this method will get all users from our server*/
 void getListFromServer(struct sockaddr_in * server_conn){
 	/*create a new sockaddr for a new connection*/
 	struct sockaddr_in serv_who_peer;
@@ -372,7 +336,6 @@ void getListFromServer(struct sockaddr_in * server_conn){
 
 	sleep(1);
 
-	//get MSG_HDR message from server and start getting the list of connected users
 	msg_hdr_t HdrMsgFromServer;
 	if(recv(server_fd, &HdrMsgFromServer, sizeof(msg_hdr_t),0) == -1) {
 		perror("read Messege \"MSG_HDR\" fail");
@@ -380,7 +343,6 @@ void getListFromServer(struct sockaddr_in * server_conn){
 	}
 	puts("Success : got MSG_HDR message");
 	sleep(1);
-	/*in loop of number of connected users fill our array(peer_msg array) with data*/
 
 	printf("Got %d peers from Server:...\n",HdrMsgFromServer.m_count);
 
@@ -425,7 +387,6 @@ void removePeerFromServer(struct sockaddr_in * server_conn,msg_ack_t * server_as
 		exit(1);
 	}
 
-	//send MSG_DOWN to our server
 	msg_down_t sendToServer;
 	sendToServer.m_type = MSG_DOWN;
 	sendToServer.m_port = server_assigned_port->m_port;
@@ -455,14 +416,12 @@ void *handlePeerConnection(void *tArgs)
 	return 0;
 }
 
-/*the peer choose which peer he wants to connect with*/
 void selectPeerToConnect(struct sockaddr_in * out_sock,msg_ack_t * server_assigned_port,in_addr_t *localIP,char usr_input[C_BUFF_SIZE]){
 	/*Function VARS*/
 	int equlsPeerFD = -1; //used to open a new chat windows using FD Number
 	msg_peer_t peerSelection;
 	int userSelection=-1;
-	/****************/
-	/*print all connected Peers*/
+	
 	for(int i=0;i<MAX_USERS;i++){
 		/*Send MSG_PEER messeges*/
 		if(listOfPeers[i]){
@@ -473,15 +432,12 @@ void selectPeerToConnect(struct sockaddr_in * out_sock,msg_ack_t * server_assign
 		}
 	}
 
-	/*Let user choose to which peer he want's to connect*/
 	printf("Please Choose the client you want to chat with:(By Number)\n");
 
 	scanf( "%d", &userSelection);
 
-	/*Testing Purps*/
 	// printf("%d",userSelection);
 
-	/*create msg_conn_t with all data required*/
 	msg_conn_t sendToPeer;
 	sendToPeer.m_type = MSG_CONN;
 	strcpy(sendToPeer.m_name,usr_input);
@@ -489,15 +445,14 @@ void selectPeerToConnect(struct sockaddr_in * out_sock,msg_ack_t * server_assign
 
 	/*Fetch Peer data by user choise*/
 
-	/*******************************/
+	
 	if(listOfPeers[userSelection]!=0)
 	{
 		peerSelection.m_addr = listOfPeers[userSelection]->m_addr;
 		peerSelection.m_port = listOfPeers[userSelection]->m_port;
 		peerSelection.m_type = listOfPeers[userSelection]->m_type;
 		strcpy(peerSelection.m_name,listOfPeers[userSelection]->m_name);
-		/***************************************************/
-		/*Testing Purps*/
+		
 		printf("\nYou choose: %s\n",peerSelection.m_name);
 		printf("The IP:port of Requested peers is : %s:%d\n",inet_ntoa(*(struct in_addr *)&peerSelection.m_addr),peerSelection.m_port);
 
