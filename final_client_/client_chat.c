@@ -43,9 +43,12 @@ void selectPeerToConnect(struct sockaddr_in * out_sock,msg_ack_t * server_assign
 
 
 void generate_menu(){
-	printf("Hello dear user pls select one of the following options:\n");
-	printf("[0]\t-\t Send MSG_WHO to server - get list of all connected users and choose peer to chat with\n");
-	printf("[9]\t-\t Send MSG_DOWN to server - unregister ourselves from server\n");
+	printf("Hello dear user please select one of the following options:\n");
+	printf("\n");
+	printf("Press 0 \t-\t To get list of all connected users and choose peer to chat with\n");
+	printf("\n");
+	printf("Press 9\t-\t to unregister yourself from server\n");
+printf("\n");
 }
 
 int main(int argc, char *argv[])
@@ -64,6 +67,7 @@ int main(int argc, char *argv[])
 	
 	connect_server(&server_conn,&server_assigned_port,&server_fd,&localIP,(char *)&usr_input);
 	printf("Congartulation your assign port number by the server is:%d\n",server_assigned_port.m_port);
+	printf("\n");
 
 	
 	if(pthread_create(&listen_tid, NULL, listenMode, (void*)&server_assigned_port) != 0)perror("could not create thread");
