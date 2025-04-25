@@ -5,8 +5,8 @@
 #include <pthread.h>
 #include <signal.h>
 #include <sys/socket.h>
-#include <unistd.h>     // for close(), fork(), etc.
-#include <string.h>     // for strlen()
+#include <unistd.h>     
+#include <string.h>     
 
 
 #define MAX_MSG_LEN 1024
