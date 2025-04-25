@@ -146,7 +146,7 @@ void *handlePacket(void *tArgs)
 	}
 	switch(msg_type) {
 	case MSG_UP: { //check the client has send MSG_UP and return to the client MSG_ACK message
-		printf("Got MSG_UP message\n");
+		printf("Request sent to Server\n");
 
 		msg_up_t msg;
 		if(recv(fd_request, (void*)&msg, sizeof(msg_up_t),0) == -1) {
@@ -203,7 +203,7 @@ void *handlePacket(void *tArgs)
 	}break;
 
 	case MSG_DOWN: {
-		printf("Got MSG_DOWN message Removing User from SYSTEM\n");
+		printf("Request sent to the server\n");
 		msg_down_t *msg = (msg_down_t *)malloc(sizeof(msg_down_t));
 		if(recv(fd_request, msg, sizeof(msg_down_t),0) == -1) {
 			perror("read Messege \"DOWN\" fail");
@@ -219,9 +219,12 @@ void *handlePacket(void *tArgs)
 	}break;
 
 	case MSG_WHO: {
-		printf("Got MSG_WHO message\n");
-		printf("Sending MSG_HDR message\n");
+		printf("Request sent to server\n");
+		printf("\n");
+		printf("Sending the registered users list\n");
+		printf("\n");
 		sleep(1);
+		
 
 		msg_hdr_t msgToSend;
 		msgToSend.m_count = users_count;
