@@ -147,7 +147,7 @@ in_addr_t sockfd_to_in_addr_t(int sockfd)
 
 void connect_server(struct sockaddr_in * server_conn,msg_ack_t * server_assigned_port,int *server_fd,in_addr_t *localIP,char usr_input[C_BUFF_SIZE])
 {
-	
+	char ip_str[INET_ADDRSTRLEN]; 
 	/*The Client is trying to register in our *running* server, if it fails close client!*/
 	printf("Hello dear User Please Press Enter to get connected to server\n");
 	
