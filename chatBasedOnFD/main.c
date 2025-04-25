@@ -1,9 +1,3 @@
-/*
- * main.c
- *
- *  Created on: Jun 16, 2017
- *      Author: parallels
- */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,9 +11,7 @@
 #include <string.h>
 
 #include "chat.h"
-/*This Program gets an fd from who is trigger her and opens two new threads
- * One for writing into socket
- * Two for reading from socket*/
+
 /*the socket will be closed when MSG_END will be sent*/
 pthread_t tid[2];
 int isAlive=1;
@@ -89,7 +81,7 @@ int main(int argc,char*argv[])
 	int connfd = atoi(argv[1]);  //argv[0] is the program name
 	                           //atoi = ascii to int
 
-	//Check if socket is valid!
+	
 	int val;
 	socklen_t len = sizeof(val);
 	if (getsockopt(connfd, SOL_SOCKET, SO_ACCEPTCONN, &val, &len) == -1){
@@ -99,7 +91,6 @@ int main(int argc,char*argv[])
 
 	printf("Chat Session Has Been Started..\n");
 	printf("To End Chat Session simply enter [exit]..\n");
-	/*open thread for Reading*/
 	if(pthread_create(&tid[0] , NULL , WriteToScreen ,&connfd) < 0){
 		perror("thread");
 	}
