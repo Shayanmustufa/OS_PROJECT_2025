@@ -1,13 +1,3 @@
-/*
- * chats.c
- *
- *  Created on: Jun 6, 2017
- *      Author: Eran Peled
- *
- *      This File is the implement of the "Server"
- *      During this exercise the server is a kind of "DB" he is responsible keeping records of users in the system
- *      and provide a list of current connected users to the system to any given client.
- */
 #include<pthread.h>
 #include<sys/socket.h>
 #include<arpa/inet.h> //inet_addr
@@ -204,7 +194,7 @@ void *handlePacket(void *tArgs)
 
 
 
-		//save with our array  external function
+		
 		user_add(msgToSaveNServer);
 
 		//printf("The ip of first user in array is: %s:\n",inet_ntoa(*(struct in_addr *)&actualArgs->programlist[0]->m_addr));
@@ -233,7 +223,6 @@ void *handlePacket(void *tArgs)
 		printf("Sending MSG_HDR message\n");
 		sleep(1);
 
-		/*produce MSG_HDR message*/
 		msg_hdr_t msgToSend;
 		msgToSend.m_count = users_count;
 		msgToSend.m_type = MSG_HDR;
@@ -266,7 +255,7 @@ void *handlePacket(void *tArgs)
 	default: {
 		printf("\nError! the client has not sent(or wrong)messege type at the first field of packet!\n");
 	}
-	} // end of switchcase
+	}
 
 	pthread_detach(pthread_self());
 	return 0;
